@@ -1,0 +1,9 @@
+return {
+  _all = {
+    lua = "test/bin/lua.sh",
+  },
+  default = {
+    verbose = true,
+    ROOT = { "test/spec" },
+  },
+}
