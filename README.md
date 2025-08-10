@@ -42,7 +42,7 @@ return {
 						module = "blink-cmp-dat-word",
 						opts = {
 							paths = {
-								-- "path_to_your_words.txt", -- You can add your owned word files.
+								-- "path_to_your_words.txt", -- add your owned word files before dictionary.
 								"/usr/share/dict/words", -- This file is included by default on Linux/macOS.
 							},
 						},
@@ -57,12 +57,14 @@ return {
 }
 ```
 
+> Query words in order of `opts.paths`, add custom words file before dictionary files.
+
 ## Word Source Files
 
 Recommends:
 
+- [Google-10000-english](https://github.com/first20hours/google-10000-english) 10k most common English words.
 - `/usr/share/dict/words` is a standard system file on Unix-like OSes containing a large list of English words, one per line.
-- [Google-1000-english](https://github.com/first20hours/google-10000-english) 10k most common English words.
 
 Or add your own word list, with one word per line.
 
