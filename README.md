@@ -1,6 +1,8 @@
 # blink-cmp-dat-word
 
-Fast, offline word source for [blink.cmp](https://github.com/Saghen/blink.cmp).
+[![Unit Tests](https://github.com/xieyonn/blink-cmp-dat-word/actions/workflows/test.yaml/badge.svg?branch=main)](https://github.com/xieyonn/blink-cmp-dat-word/actions/workflows/test.yaml)
+
+Fast, offline word source for [blink.cmp](https://github.com/Saghen/blink.cmp). Pure Lua, no other dependencies.
 
 ![Preview Image](data/preview.png)
 
@@ -8,7 +10,7 @@ Fast, offline word source for [blink.cmp](https://github.com/Saghen/blink.cmp).
 
 - Fast
     - Use [Double-Array Tire](https://linux.thai.net/~thep/datrie/datrie.html) data structure to build the word completion source, with query time < 1ms.
-    - After the DAT tree is built, it is saved as a binary cache file and only rebuilt when the word source file is updated.
+    - Use binary file for serialization, only rebuilt when the word source file is updated.
 - Async: All operations are performed asynchronously and will never block.
 
 ## Requirements
@@ -63,3 +65,10 @@ Recommends:
 - [Google-1000-english](https://github.com/first20hours/google-10000-english) 10k most common English words.
 
 Or add your own word list, with one word per line.
+
+## Related Projects
+
+- [blink-cmp-dictionary](https://github.com/Kaiser-Yang/blink-cmp-dictionary) Use external tools `fzf` or `ag` to search text files.
+- [blink-cmp-words](https://github.com/archie-judd/blink-cmp-words) Use external tool `fzf` to search a formated file, also support thesaurus.
+
+Inspired by [cmp-dictionary](https://github.com/uga-rosa/cmp-dictionary), which uses a Trie tree and `JSON` for serialization.
