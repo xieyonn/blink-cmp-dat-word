@@ -17,6 +17,8 @@ local d = require("blink-cmp-dat-word.dat")
 ---@class blink.cmp.Source.DatWord.Opts
 ---@field data_file_dir string
 ---@field paths string[]
+---@field max_items number
+---@field min_keyword_length number
 local default_opts = {
   data_file_dir = vim.fn.stdpath("data"),
   paths = {},
@@ -35,6 +37,9 @@ function source.new(o, config)
   s.opts = vim.tbl_deep_extend("force", default_opts, o or {})
   s.config = config
   s.dats = {}
+
+  s.opts.max_items = s:get_config_by_key("max_items", MAX_ITEMS)
+  s.opts.min_keyword_length = s:get_config_by_key("min_keyword_length", 1)
 
   s:init()
 
@@ -55,37 +60,39 @@ function source:init()
   end
 end
 
-local function get_max_items(config)
-  if config and config.max_items then
-    if type(config.max_items) == "function" then
-      return config.max_items()
-    elseif type(config.max_items) == "number" then
-      return config.max_items
-    end
-  end
-
-  return MAX_ITEMS
-end
-
-function source:get_completions(ctx, callback)
-  local limit = get_max_items(self.config)
-  local keyword = ctx:get_keyword()
-  if #keyword == 0 then
-    return
-  end
-
+function source:query_dat(keyword)
   local words = {}
+  local duplicate = {}
   local count = 0
   for _, dat in ipairs(self.dats) do
-    for _, word in ipairs(dat:bfs_search(keyword, limit)) do
-      table.insert(words, word)
-      count = count + 1
+    for _, word in ipairs(dat:bfs_search(keyword, self.opts.max_items)) do
+      if not duplicate[word] then
+        count = count + 1
+        duplicate[word] = true
+        table.insert(words, word)
+      end
 
-      if count > limit then
-        break
+      if count >= self.opts.max_items then
+        return words
       end
     end
   end
+
+  return words
+end
+
+function source:get_completions(ctx, callback)
+  local keyword = ctx:get_keyword()
+  if #keyword < self.opts.min_keyword_length then
+    callback({
+      items = {},
+      is_incomplete_backward = false,
+      is_incomplete_forward = true,
+    })
+    return
+  end
+
+  local words = self:query_dat(keyword)
 
   --- @type lsp.CompletionItem[]
   local items = {}
@@ -102,6 +109,24 @@ function source:get_completions(ctx, callback)
     is_incomplete_backward = true,
     is_incomplete_forward = true,
   })
+end
+
+function source:get_config_by_key(key, default_value)
+  if self.config == nil then
+    return default_value
+  end
+
+  local val = self.config[key]
+  if val then
+    local v_type = type(val)
+    if v_type == "function" then
+      return val()
+    else
+      return val
+    end
+  end
+
+  return default_value
 end
 
 return source
