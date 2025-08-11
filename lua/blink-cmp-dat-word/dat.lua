@@ -10,14 +10,14 @@ local RESIZE_SCALE_RATIO = 2
 local RESIZE_SCALE_MAX = 65536
 local RESIZE_SCALE_NEW = 256
 local BATCH_INSERT = 1000
+local ROOT_INDEX = 1
+local SEARCH_LIMIT = 20
 
 local MAGIC = "DAT1.0.0"
 local FILE_HEADER =
   string.format("struct { char magic[%s]; uint32_t size; }", #MAGIC)
 local FILE_MODE = 384
 local DATA_FILE_DIR = vim.fn.stdpath("data")
-
-local ROOT_INDEX = 1
 
 ---@class datword.Dat
 ---@field default_charset string[]
@@ -476,18 +476,19 @@ function DAT:_compact()
 end
 
 ---BFS search, used in completion.
+---
 ---@param prefix string
----@param limit? integer default 20.
+---@param limit? integer
 ---@return string[]
 function DAT:bfs_search(prefix, limit)
   vim.validate("prefix", prefix, "string")
   vim.validate("limit", limit, "number", true)
 
   if #prefix == 0 then
-    error("[DatWord] prefix should not be empty")
+    return {}
   end
 
-  limit = limit or 20
+  limit = limit or SEARCH_LIMIT
   local pos = ROOT_INDEX
   local results = {}
   local prefix_length = #prefix

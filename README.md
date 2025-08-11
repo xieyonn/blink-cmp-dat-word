@@ -4,12 +4,12 @@
 
 Fast, offline word source for [blink.cmp](https://github.com/Saghen/blink.cmp). Pure Lua, no other dependencies.
 
-![Preview Image](data/preview.png)
+<img src="data/preview.png" alt="Preview Image" width="580">
 
 ## Features
 
 - Fast
-    - Use [Double-Array Tire](https://linux.thai.net/~thep/datrie/datrie.html) data structure to build the word completion source, with query time < 1ms.
+    - Use [Double-Array Tire](https://linux.thai.net/~thep/datrie/datrie.html) data structure to build the word completion source, with query time < 0.1 ms.
     - Use binary file for serialization, only rebuilt when the word source file is updated.
 - Async: All operations are performed asynchronously and will never block.
 
@@ -38,7 +38,7 @@ return {
 				providers = {
 					-- add datword provider
 					datword = {
-						name = "DatWords",
+						name = "DatWord",
 						module = "blink-cmp-dat-word",
 						opts = {
 							paths = {
@@ -49,6 +49,7 @@ return {
 
 						-- max_items = 20, -- Maximum number of words queried per request.
 						-- score_offset = -10, -- Set a lower priority.
+                        -- min_keyword_length = 2,
 					},
 				},
 			},
