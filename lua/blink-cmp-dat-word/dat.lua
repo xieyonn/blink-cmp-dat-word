@@ -20,7 +20,6 @@ local FILE_MODE = 384
 local DATA_FILE_DIR = vim.fn.stdpath("data")
 
 ---@class datword.Dat
----@field default_charset string[]
 local DAT = {}
 DAT.__index = DAT
 
@@ -54,8 +53,6 @@ function DAT.new(o)
   ---@class datword.Dat
   local dat = setmetatable({}, DAT)
   dat.size = DAT_SIZE_DEFAULT + 1
-  dat.char_count = 0
-  dat.word_count = 0
 
   dat.base = ffi.new("int32_t[?]", dat.size)
   dat.check = ffi.new("int32_t[?]", dat.size)
@@ -67,11 +64,6 @@ function DAT.new(o)
   dat.last_base = 1
   dat.children = {}
   dat:apply_opts(o)
-
-  --TODO delete
-  dat.find_base_times = 0
-  dat.resize_times = 0
-  dat.conflict = 0
 
   return dat
 end
@@ -293,8 +285,6 @@ function DAT:_resize(required_pos)
     new_check[i] = 0
   end
 
-  self.resize_times = self.resize_times + 1
-
   self.base = new_base
   self.check = new_check
   self.size = new_size
@@ -315,7 +305,6 @@ function DAT:_find_base(children)
   while true do
     local ok = true
 
-    self.find_base_times = self.find_base_times + 1
     local pos_max = start + max_child
     if pos_max >= self.size then
       self:_resize(pos_max)
@@ -361,7 +350,6 @@ end
 ---Insert a word.
 ---@param word string
 function DAT:_insert(word)
-  vim.validate("word", word, "string")
   if #word == 0 then
     return
   end
@@ -384,7 +372,6 @@ function DAT:_insert(word)
 
     --conflict
     if self.check[t] ~= 0 and self.check[t] ~= s then
-      self.conflict = self.conflict + 1
       --find children nodes of s
       local children = self.children[s] or {}
       table.insert(children, c)
@@ -437,7 +424,6 @@ function DAT:_insert(word)
       self.check[t] = s
       self.base[t] = 1
 
-      self.char_count = self.char_count + 1
       if not self.children[s] then
         self.children[s] = {}
       end
@@ -449,7 +435,6 @@ function DAT:_insert(word)
 
   --leaf node use nagetive value.
   self.base[s] = -math.abs(self.base[s])
-  self.word_count = self.word_count + 1
 end
 
 function DAT:_compact()
@@ -611,17 +596,6 @@ function DAT:save(filepath, callback)
       )
     end
   end, callback)
-end
-
-function DAT:density()
-  local count = 0
-  for i = 1, self.size do
-    if self.check[i] ~= 0 then
-      count = count + 1
-    end
-  end
-
-  return string.format("%.2f%%", (count / self.size) * 100)
 end
 
 return DAT
