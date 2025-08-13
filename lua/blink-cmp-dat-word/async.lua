@@ -1,13 +1,6 @@
 ---@class datword.async
 local M = {}
 
-setmetatable(M, M)
-
-local function is_callable(fn)
-  return type(fn) == "function"
-    or (type(fn) == "table" and type(getmetatable(fn)["__call"]) == "function")
-end
-
 local function resume_process(resume, co, callback, ...)
   local packed = vim.F.pack_len(...)
   local ok = packed[1]
@@ -29,7 +22,7 @@ local function resume_process(resume, co, callback, ...)
   end
 
   local f = packed[2]
-  if is_callable(f) then
+  if vim.is_callable(f) then
     packed[packed.n + 1] = resume
     packed.n = packed.n + 1
     f(unpack(packed, 3, packed.n))
