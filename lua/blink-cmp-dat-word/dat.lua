@@ -90,8 +90,9 @@ end
 ---@async
 ---
 ---@param filepath string
+---@param force? boolean
 ---@param callback? fun(err: nil|string)
-function DAT:build(filepath, callback)
+function DAT:build(filepath, force, callback)
   vim.validate("filepath", filepath, "string")
   vim.validate("callback", callback, "callable", true)
 
@@ -101,6 +102,12 @@ function DAT:build(filepath, callback)
     local err, fstat = async.await(vim.uv.fs_stat, filepath)
     if err or not fstat then
       error(string.format("file %s is not exist", filepath))
+    end
+
+    if force == true then
+      err = async.await(self._build_from_file, self, filepath)
+      assert(not err, err)
+      return
     end
 
     local data_filepath = self:_get_data_filepath(filepath)

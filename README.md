@@ -24,37 +24,38 @@ Using [lazy.nvim](https://github.com/folke/lazy.nvim)
 
 ```lua
 return {
-	{
-		"saghen/blink.cmp",
-		dependencies = {
-			"xieyonn/blink-cmp-dat-word",
-		},
-		opts = {
-			sources = {
-				default = {
-					-- ...
-					"datword", -- add datword to default sources
-				},
-				providers = {
-					-- add datword provider
-					datword = {
-						name = "DatWord",
-						module = "blink-cmp-dat-word",
-						opts = {
-							paths = {
-								-- "path_to_your_words.txt", -- add your owned word files before dictionary.
-								"/usr/share/dict/words", -- This file is included by default on Linux/macOS.
-							},
-						},
+  {
+    "saghen/blink.cmp",
+    dependencies = {
+      "xieyonn/blink-cmp-dat-word",
+    },
+    opts = {
+      sources = {
+        default = {
+          -- ...
+          "datword", -- add datword to default sources
+        },
+        providers = {
+          -- add datword provider
+          datword = {
+            name = "DatWord",
+            module = "blink-cmp-dat-word",
+            opts = {
+              paths = {
+                -- "path_to_your_words.txt", -- add your owned word files before dictionary.
+                "/usr/share/dict/words", -- This file is included by default on Linux/macOS.
+              },
+              build_command = "" -- Define a Command to rebuild words, eg: `BuildDatWord`, then use `BuildDatWord!` to force rebuild.
+            },
 
-						-- max_items = 20, -- Maximum number of words queried per request.
-						-- score_offset = -10, -- Set a lower priority.
-                        -- min_keyword_length = 2,
-					},
-				},
-			},
-		},
-	},
+            -- max_items = 20, -- Maximum number of words queried per request.
+            -- score_offset = -10, -- Set a lower priority.
+            -- min_keyword_length = 2,
+          },
+        },
+      },
+    },
+  },
 }
 ```
 
