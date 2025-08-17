@@ -9,10 +9,11 @@
 local source = {}
 source.__index = source
 
-local MAX_ITEMS = 20
+local MAX_ITEMS = 5
 local KIND = require("blink.cmp.types").CompletionItemKind.Text
 
 local d = require("blink-cmp-dat-word.dat")
+local query = require("blink-cmp-dat-word.query")
 
 ---@class blink.cmp.Source.DatWord.Opts
 ---@field data_file_dir string
@@ -20,9 +21,11 @@ local d = require("blink-cmp-dat-word.dat")
 ---@field max_items? number
 ---@field min_keyword_length? number
 ---@field build_command? string
+---@field spellsuggest boolean
 local default_opts = {
   data_file_dir = vim.fn.stdpath("data"),
   paths = {},
+  spellsuggest = false,
 }
 
 ---New Source.
@@ -95,12 +98,16 @@ function source:register_cmd()
   })
 end
 
-function source:query_dat(keyword)
+function source:query(keyword)
   local words = {}
   local duplicate = {}
   local count = 0
   for _, dat in ipairs(self.dats) do
-    for _, word in ipairs(dat:bfs_search(keyword, self.opts.max_items)) do
+    for _, word in
+      ipairs(
+        query.query(dat, keyword, self.opts.max_items, self.opts.spellsuggest)
+      )
+    do
       if not duplicate[word] then
         count = count + 1
         duplicate[word] = true
@@ -116,6 +123,10 @@ function source:query_dat(keyword)
   return words
 end
 
+local function sortText(input, padding, index)
+  return string.format(input .. "%0" .. padding .. "d", index)
+end
+
 function source:get_completions(ctx, callback)
   local keyword = ctx:get_keyword()
   if #keyword < self.opts.min_keyword_length then
@@ -127,15 +138,22 @@ function source:get_completions(ctx, callback)
     return
   end
 
-  local words = self:query_dat(keyword)
+  local words = self:query(keyword)
+  local padding = math.ceil(math.log10(#words + 1))
 
   --- @type lsp.CompletionItem[]
   local items = {}
-  for _, word in ipairs(words) do
+  for i, word in ipairs(words) do
     local item = {
       label = word,
       kind = KIND,
     }
+
+    -- do not use blink-cmp's filter and sort.
+    if self.opts.spellsuggest then
+      item.filterText = keyword
+      item.sortText = sortText(keyword, padding, i)
+    end
     table.insert(items, item)
   end
 

@@ -12,6 +12,7 @@ Fast, offline word source for [blink.cmp](https://github.com/Saghen/blink.cmp). 
     - Use [Double-Array Tire](https://linux.thai.net/~thep/datrie/datrie.html) data structure to build the word completion source, with query time < 0.1 ms.
     - Use binary file for serialization, only rebuilt when the word source file is updated.
 - Async: All operations are performed asynchronously and will never block.
+- Limited spell-suggest: Help correct minor spelling mistakes.
 
 ## Requirements
 
@@ -45,12 +46,7 @@ return {
                 -- "path_to_your_words.txt", -- add your owned word files before dictionary.
                 "/usr/share/dict/words", -- This file is included by default on Linux/macOS.
               },
-              build_command = "" -- Define a Command to rebuild words, eg: `BuildDatWord`, then use `BuildDatWord!` to force rebuild.
             },
-
-            -- max_items = 20, -- Maximum number of words queried per request.
-            -- score_offset = -10, -- Set a lower priority.
-            -- min_keyword_length = 2,
           },
         },
       },
@@ -60,6 +56,18 @@ return {
 ```
 
 > Query words in order of `opts.paths`, add custom words file before dictionary files.
+
+## Options
+
+Options are defined in `blink.cmp`, config path: `sources.provider.datword.opts`
+
+```lua
+opts = {
+  paths = { "path_to_your_words" }, -- word source file paths.
+  build_command = "" -- Define a Command to rebuild words, eg: `BuildDatWord`, then use `BuildDatWord!` to force rebuild.
+  spellsuggest = false,-- Enable limited spellsuggest. eg: enter `thsi` give you `this`
+}
+```
 
 ## Word Source Files
 

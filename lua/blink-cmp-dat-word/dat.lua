@@ -11,7 +11,7 @@ local RESIZE_SCALE_MAX = 65536
 local RESIZE_SCALE_NEW = 256
 local BATCH_INSERT = 1000
 local ROOT_INDEX = 1
-local SEARCH_LIMIT = 20
+local SEARCH_LIMIT = 5
 
 local MAGIC = "DAT1.0.0"
 local FILE_HEADER =
@@ -529,8 +529,6 @@ end
 ---@param word string
 ---@return boolean
 function DAT:contains(word)
-  vim.validate("word", word, "string")
-
   if #word == 0 then
     return false
   end
