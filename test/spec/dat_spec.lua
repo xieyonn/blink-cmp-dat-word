@@ -89,7 +89,7 @@ describe("dat #dat", function()
     local dictfile = vim.fs.joinpath(vim.env.ROOT_DIR, "data/word.txt")
 
     local dat = dattree.new()
-    dat:build(dictfile, function(err)
+    dat:build(dictfile, true, function(err)
       assert.is_nil(err)
 
       done:done()

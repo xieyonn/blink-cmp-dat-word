@@ -17,8 +17,9 @@ local d = require("blink-cmp-dat-word.dat")
 ---@class blink.cmp.Source.DatWord.Opts
 ---@field data_file_dir string
 ---@field paths string[]
----@field max_items number
----@field min_keyword_length number
+---@field max_items? number
+---@field min_keyword_length? number
+---@field build_command? string
 local default_opts = {
   data_file_dir = vim.fn.stdpath("data"),
   paths = {},
@@ -58,6 +59,40 @@ function source:init()
 
     dat:build(path)
   end
+
+  if self.opts.build_command and self.opts.build_command ~= "" then
+    self:register_cmd()
+  end
+end
+
+function source:register_cmd()
+  vim.api.nvim_create_user_command(self.opts.build_command, function(opts)
+    local count = #self.opts.paths
+    if count == 0 then
+      vim.notify("[DatWord] source file paths is empty.")
+      return
+    end
+
+    local done = 0
+    local dats = {}
+    local cb = function()
+      done = done + 1
+      if done == count then
+        vim.notify("[DatWord] build words done.")
+        self.dats = dats
+      end
+    end
+
+    for i, path in ipairs(self.opts.paths) do
+      local dat = d.new({ data_file_dir = self.opts.data_file_dir })
+      dats[i] = dat
+
+      dat:build(path, opts.bang, cb)
+    end
+  end, {
+    desc = "build blink.cmp source datword",
+    bang = true,
+  })
 end
 
 function source:query_dat(keyword)
