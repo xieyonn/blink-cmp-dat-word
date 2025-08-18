@@ -15,8 +15,8 @@ local KIND = require("blink.cmp.types").CompletionItemKind.Text
 local d = require("blink-cmp-dat-word.dat")
 
 ---@class blink.cmp.Source.DatWord.Opts
----@field data_file_dir string
 ---@field paths string[]
+---@field data_file_dir? string
 ---@field max_items? number
 ---@field min_keyword_length? number
 ---@field build_command? string
