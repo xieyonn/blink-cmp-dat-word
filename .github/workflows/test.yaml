@@ -13,25 +13,34 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        neovim_version: ["stable", "v0.11.0"]
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install Neovim stable version
-        run: |
-          curl -LO https://github.com/neovim/neovim/releases/download/stable/nvim-linux-x86_64.tar.gz
-          tar -xzf nvim-linux-x86_64.tar.gz
-          sudo mv nvim-linux-x86_64 /opt/nvim
-          echo "/opt/nvim/bin" >> $GITHUB_PATH
+      - name: Setup neovim
+        uses: rhysd/action-setup-vim@v1
+        with:
+          neovim: true
+          version: ${{ matrix.neovim_version }}
 
-      - name: Check neovim version
-        run: nvim --version
+      - name: Install Lua
+        uses: leso-kn/gh-actions-lua@master
+        with:
+          luaVersion: "5.1"
 
-      - name: Install luarocks & busted
+      - name: Install Luarocks
+        uses: hishamhm/gh-actions-luarocks@master
+        with:
+          luarocksVersion: "3.12.2"
+
+      - name: Install busted
         run: |
-          sudo apt-get update
-          sudo apt-get install -y luarocks
-          sudo luarocks install busted
+          luarocks install busted
 
       - name: Run tests
         run: |
