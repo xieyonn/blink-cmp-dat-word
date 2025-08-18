@@ -15,7 +15,7 @@ Fast, offline word source for [blink.cmp](https://github.com/Saghen/blink.cmp). 
 
 ## Requirements
 
-- neovim >= v0.10.0
+- neovim >= v0.11.0
 - [blink.cmp](https://github.com/Saghen/blink.cmp)
 
 ## Quick Start
