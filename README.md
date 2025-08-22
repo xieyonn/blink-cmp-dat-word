@@ -75,4 +75,4 @@ Or add your own word list, with one word per line.
 - [blink-cmp-dictionary](https://github.com/Kaiser-Yang/blink-cmp-dictionary) Use external tools `fzf` or `ag` to search text files.
 - [blink-cmp-words](https://github.com/archie-judd/blink-cmp-words) Use external tool `fzf` to search a formated file, also support thesaurus.
 
-Inspired by [cmp-dictionary](https://github.com/uga-rosa/cmp-dictionary), which uses a Trie tree and `JSON` for serialization.
+Inspired by [cmp-dictionary](https://github.com/uga-rosa/cmp-dictionary).
