@@ -10,7 +10,7 @@ local source = {}
 source.__index = source
 
 local MAX_ITEMS = 5
-local KIND = require("blink.cmp.types").CompletionItemKind.Text
+local KIND = vim.lsp.protocol.CompletionItemKind.Text
 
 local d = require("blink-cmp-dat-word.dat")
 local query = require("blink-cmp-dat-word.query")
@@ -21,7 +21,7 @@ local query = require("blink-cmp-dat-word.query")
 ---@field max_items? number
 ---@field min_keyword_length? number
 ---@field build_command? string
----@field spellsuggest boolean
+---@field spellsuggest? boolean
 local default_opts = {
   data_file_dir = vim.fn.stdpath("data"),
   paths = {},
