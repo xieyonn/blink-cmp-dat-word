@@ -39,7 +39,7 @@ return {
         providers = {
           -- add datword provider
           datword = {
-            name = "DatWord",
+            name = "Word",
             module = "blink-cmp-dat-word",
             opts = {
               paths = {
@@ -59,13 +59,13 @@ return {
 
 ## Options
 
-Options are defined in `blink.cmp`, config path: `sources.provider.datword.opts`
+Options are defined in `blink.cmp`, config path: `sources.providers.datword.opts`
 
 ```lua
 opts = {
   paths = { "path_to_your_words" }, -- word source file paths.
-  build_command = "" -- Define a Command to rebuild words, eg: `BuildDatWord`, then use `BuildDatWord!` to force rebuild.
-  spellsuggest = false,-- Enable limited spellsuggest. eg: enter `thsi` give you `this`
+  build_command = "" -- Define a Command to rebuild words, eg: `BuildDatWord`, then use `BuildDatWord!` to force rebuild cache.
+  spellsuggest = false,-- Enable limited spellsuggest. eg: enter `thsi` give you `this`.
 }
 ```
 
@@ -74,7 +74,7 @@ opts = {
 Recommends:
 
 - [Google-10000-english](https://github.com/first20hours/google-10000-english) 10k most common English words.
-- `/usr/share/dict/words` is a standard system file on Unix-like OSes containing a large list of English words, one per line.
+- `/usr/share/dict/words` is a standard system file on Unix-like OSes containing a large list of English words, one word per line.
 
 Or add your own word list, with one word per line.
 
