@@ -1,6 +1,9 @@
 local async = require("blink-cmp-dat-word.async")
 local d = require("blink-cmp-dat-word.done")
 local fs = require("blink-cmp-dat-word.fs")
+local t = require("t")
+local eq = t.eq
+local neq = t.neq
 
 local FILE_CHUNK_SIZE = 64 * 1024
 
@@ -23,15 +26,15 @@ describe("fs #fs", function()
 
     async.run(function()
       local err, content = async.await(fs.read_bigfile, filename, {})
-      assert.is_nil(err)
-      assert.is.equal(size * 1024, #content)
+      eq(nil, err)
+      eq(size * 1024, #content)
 
       done:done()
     end)
 
     done:wait()
     local ok = vim.uv.fs_unlink(filename)
-    assert.is_true(ok)
+    eq(true, ok)
   end)
 
   it("read_bigfile, file not exist", function()
@@ -40,13 +43,13 @@ describe("fs #fs", function()
 
     async.run(function()
       local err = async.await(fs.read_bigfile, filename .. "aa", {})
-      assert.is_not_nil(err)
+      neq(nil, err)
       done:done()
     end)
 
     done:wait()
     local ok = vim.uv.fs_unlink(filename)
-    assert.is_true(ok)
+    eq(true, ok)
   end)
 
   it("read_bigfile, file size < chunk_size", function()
@@ -57,15 +60,15 @@ describe("fs #fs", function()
 
     async.run(function()
       local err, content = async.await(fs.read_bigfile, filename, {})
-      assert.is_nil(err)
-      assert.is.equal(size * 1024, #content)
+      eq(nil, err)
+      eq(size * 1024, #content)
 
       done:done()
     end)
 
     done:wait()
     local ok = vim.uv.fs_unlink(filename)
-    assert.is_true(ok)
+    eq(true, ok)
   end)
 
   it("write bigfile", function()
@@ -79,16 +82,16 @@ describe("fs #fs", function()
 
     async.run(function()
       local err = async.await(fs.write_bigfile, filename, data, nil)
-      assert.is_nil(err)
+      eq(nil, err)
 
       local fs_stat = vim.uv.fs_stat(filename)
-      assert.is_not_nil(fs_stat)
+      neq(nil, fs_stat)
       assert(fs_stat)
 
-      assert.equal(3000 * 1024, fs_stat.size)
+      eq(3000 * 1024, fs_stat.size)
 
       local err2 = vim.uv.fs_unlink(filename)
-      assert.is_true(err2)
+      eq(true, err2)
 
       done:done()
     end)
@@ -104,7 +107,7 @@ describe("fs #fs", function()
     fs.mkdir(tmpdir, tonumber("755", 8))
 
     local fstat = vim.uv.fs_stat(vim.fs.joinpath(dir, "a/b"))
-    assert.is_not_nil(fstat)
+    neq(nil, fstat)
 
     vim.fn.delete(dir, "rf")
   end)

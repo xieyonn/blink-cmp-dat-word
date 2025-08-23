@@ -1,5 +1,8 @@
 local async = require("blink-cmp-dat-word.async")
 local d = require("blink-cmp-dat-word.done")
+local t = require("t")
+local eq = t.eq
+local neq = t.neq
 
 describe("async test #async", function()
   local file
@@ -11,8 +14,8 @@ describe("async test #async", function()
   before_each(function()
     done:reset()
     file, test_file = vim.uv.fs_mkstemp("/tmp/async_test.XXXXXX")
-    assert.is_not_nil(test_file)
-    assert.is_not_nil(file)
+    neq(nil, test_file)
+    neq(nil, file)
     if file then
       vim.uv.fs_close(file)
     end
@@ -26,34 +29,34 @@ describe("async test #async", function()
     async.run(function()
       local err_open, fd_write =
         async.await(vim.uv.fs_open, test_file, "w", 438)
-      assert.is_nil(err_open)
+      eq(nil, err_open)
       assert(fd_write, "Failed to open file for writing " .. test_file)
 
       local err_write, write_ok =
         async.await(vim.uv.fs_write, fd_write, test_content, -1)
-      assert.is_nil(err_write)
+      eq(nil, err_write)
       assert(write_ok == #test_content, "Failed to write full content")
 
       local err_close, ok = async.await(vim.uv.fs_close, fd_write)
-      assert.is_nil(err_close)
-      assert.is_true(ok)
+      eq(nil, err_close)
+      eq(true, ok)
 
       local err_open2, fd_read =
         async.await(vim.uv.fs_open, test_file, "r", 438)
-      assert.is_nil(err_open2)
+      eq(nil, err_open2)
       assert(fd_read, "Failed to open file for reading")
 
       local err_stat, stat = async.await(vim.uv.fs_fstat, fd_read)
-      assert.is_nil(err_stat)
+      eq(nil, err_stat)
       assert(stat.size > 0, "File should not be empty")
 
       local err_read, data = async.await(vim.uv.fs_read, fd_read, stat.size, 0)
-      assert.is_nil(err_read)
+      eq(nil, err_read)
       assert(data == test_content, "Read content is not equal to write content")
 
       local err_close2, ok2 = async.await(vim.uv.fs_close, fd_read)
-      assert.is_nil(err_close2)
-      assert.is_true(ok2)
+      eq(nil, err_close2)
+      eq(true, ok2)
 
       done:done()
     end)
@@ -80,34 +83,34 @@ describe("async test #async", function()
         local content = "File " .. i .. ": " .. test_content
 
         local err_open, fd = async.await(vim.uv.fs_open, filename, "w", 438)
-        assert.is_nil(err_open)
+        eq(nil, err_open)
         local err_write = async.await(vim.uv.fs_write, fd, content, -1)
-        assert.is_nil(err_write)
+        eq(nil, err_write)
         local err_close, ok = async.await(vim.uv.fs_close, fd)
-        assert.is_nil(err_close)
-        assert.is_true(ok)
+        eq(nil, err_close)
+        eq(true, ok)
 
         local err_open2, fd_read =
           async.await(vim.uv.fs_open, filename, "r", 438)
-        assert.is_nil(err_open2)
+        eq(nil, err_open2)
         local err_stat, stat = async.await(vim.uv.fs_fstat, fd_read)
-        assert.is_nil(err_stat)
+        eq(nil, err_stat)
         local err_read, data =
           async.await(vim.uv.fs_read, fd_read, stat.size, 0)
-        assert.is_nil(err_read)
+        eq(nil, err_read)
         local err_close2, ok2 = async.await(vim.uv.fs_close, fd_read)
-        assert.is_nil(err_close2)
-        assert.is_true(ok2)
+        eq(nil, err_close2)
+        eq(true, ok2)
 
         results[i] = { filename = filename, content = data }
         local err_unlink, ok3 = async.await(vim.uv.fs_unlink, filename)
-        assert.is_nil(err_unlink)
-        assert.is_true(ok3)
+        eq(nil, err_unlink)
+        eq(true, ok3)
       end
 
       for i = 1, 3 do
         local expected = "File " .. i .. ": " .. test_content
-        assert.are.equal(expected, results[i].content)
+        eq(expected, results[i].content)
       end
 
       done:done()
@@ -120,33 +123,33 @@ describe("async test #async", function()
 
     async.run(function()
       local err_oepn, fd = async.await(vim.uv.fs_open, test_file, "w", 438)
-      assert.is_nil(err_oepn)
+      eq(nil, err_oepn)
       local err_write = async.await(vim.uv.fs_write, fd, test_content, -1)
-      assert.is_nil(err_write)
+      eq(nil, err_write)
       local err_close = async.await(vim.uv.fs_close, fd)
-      assert.is_nil(err_close)
+      eq(nil, err_close)
 
       local err_open2, fd_append =
         async.await(vim.uv.fs_open, test_file, "a", 438)
-      assert.is_nil(err_open2)
+      eq(nil, err_open2)
       local err_write2 =
         async.await(vim.uv.fs_write, fd_append, additional_content, -1)
-      assert.is_nil(err_write2)
+      eq(nil, err_write2)
       local err_close2 = async.await(vim.uv.fs_close, fd_append)
-      assert.is_nil(err_close2)
+      eq(nil, err_close2)
 
       local err_read, fd_read = async.await(vim.uv.fs_open, test_file, "r", 438)
-      assert.is_nil(err_read)
+      eq(nil, err_read)
       local err_stat, stat = async.await(vim.uv.fs_fstat, fd_read)
-      assert.is_nil(err_stat)
+      eq(nil, err_stat)
       local err_read2, data = async.await(vim.uv.fs_read, fd_read, stat.size, 0)
-      assert.is_nil(err_read2)
+      eq(nil, err_read2)
       local err_close3, ok = async.await(vim.uv.fs_close, fd_read)
-      assert.is_nil(err_close3)
-      assert.is_true(ok)
+      eq(nil, err_close3)
+      eq(true, ok)
 
       local expected = test_content .. additional_content
-      assert.are.equal(expected, data)
+      eq(expected, data)
 
       done:done()
     end)
@@ -168,9 +171,9 @@ describe("async test #async", function()
     async.run(function()
       return "a", "b"
     end, function(err, a, b)
-      assert.is_nil(err)
-      assert.equal(a, "a")
-      assert.equal(b, "b")
+      eq(nil, err)
+      eq(a, "a")
+      eq(b, "b")
 
       done:done()
     end)
@@ -182,7 +185,7 @@ describe("async test #async", function()
     async.run(function()
       error("test error")
     end, function(err)
-      assert.is_not_nil(err)
+      neq(nil, err)
       done:done()
     end)
     done:wait()
@@ -192,9 +195,9 @@ describe("async test #async", function()
     async.schedule(function()
       return "a", "b"
     end, function(err, a, b)
-      assert.is_nil(err)
-      assert.equal("a", a)
-      assert.equal("b", b)
+      eq(nil, err)
+      eq("a", a)
+      eq("b", b)
       done:done()
     end)
     done:wait()
