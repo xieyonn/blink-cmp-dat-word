@@ -66,6 +66,14 @@ opts = {
   paths = { "path_to_your_words" }, -- word source file paths.
   build_command = "" -- Define a Command to rebuild words, eg: `BuildDatWord`, then use `BuildDatWord!` to force rebuild cache.
   spellsuggest = false,-- Enable limited spellsuggest. eg: enter `thsi` give you `this`.
+  get_documentation = function(word, callback)
+    callback(nil) -- No documentation provided (default)
+    -- callback("string")
+    -- callback({kind:"markdown", value:"#"..word.."\n"..word})
+    -- exec commands examples
+    -- vim.system({"look", word}, {}, function(res) callback(res.code == 0 and res.stdout or nil) end)
+    -- vim.system({"wn", word, "-over"}, {}, function(res) callback(res.code == 0 and res.stdout or nil) end)
+    -- Alternatively, you can get the meaning of words in other ways. 
 }
 ```
 

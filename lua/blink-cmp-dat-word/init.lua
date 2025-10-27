@@ -22,10 +22,14 @@ local query = require("blink-cmp-dat-word.query")
 ---@field min_keyword_length? number
 ---@field build_command? string
 ---@field spellsuggest? boolean
+---@field get_documentation? fun(word:string, callback: fun(res?:string | { kind: lsp.MarkupKind, value: string}))
 local default_opts = {
   data_file_dir = vim.fn.stdpath("data"),
   paths = {},
   spellsuggest = false,
+  get_documentation = function(_, callback)
+    callback(nil)
+  end,
 }
 
 ---New Source.
@@ -162,6 +166,18 @@ function source:get_completions(ctx, callback)
     is_incomplete_backward = true,
     is_incomplete_forward = true,
   })
+end
+
+function source:resolve(item, callback)
+  local cb = function(res)
+    if res then
+      item.documentation = res
+    end
+    callback(item)
+  end
+  if type(item.label) == "string" then
+    self.opts.get_documentation(item.label, cb)
+  end
 end
 
 function source:get_config_by_key(key, default_value)
