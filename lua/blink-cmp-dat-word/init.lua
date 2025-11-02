@@ -22,10 +22,12 @@ local query = require("blink-cmp-dat-word.query")
 ---@field min_keyword_length? number
 ---@field build_command? string
 ---@field spellsuggest? boolean
+---@field resolve? fun(item: lsp.CompletionItem, callback: fun(item: lsp.CompletionItem)) @see https://cmp.saghen.dev/development/source-boilerplate.html
 local default_opts = {
   data_file_dir = vim.fn.stdpath("data"),
   paths = {},
   spellsuggest = false,
+  resolve = nil,
 }
 
 ---New Source.
@@ -162,6 +164,14 @@ function source:get_completions(ctx, callback)
     is_incomplete_backward = true,
     is_incomplete_forward = true,
   })
+end
+
+function source:resolve(item, callback)
+  if self.opts.resolve then
+    self.opts.resolve(item, callback)
+  else
+    callback(item)
+  end
 end
 
 function source:get_config_by_key(key, default_value)

@@ -66,6 +66,29 @@ opts = {
   paths = { "path_to_your_words" }, -- word source file paths.
   build_command = "" -- Define a Command to rebuild words, eg: `BuildDatWord`, then use `BuildDatWord!` to force rebuild cache.
   spellsuggest = false,-- Enable limited spellsuggest. eg: enter `thsi` give you `this`.
+  resolve = function(item, callback)
+    callback(item) -- default
+
+    -- string
+    -- item.documentation = "string"
+    -- callback(item)
+
+    -- markdown
+    -- local word = item.label
+    -- item.documentation = {kind:"markdown", value:"#"..word.."\n"..word}
+    -- callback(item)
+
+    -- exec command examples
+    -- local word = item.label
+    -- vim.system({"look", word}, {}, function(res)
+    --  if res.code == 0 then item.documentation = res.stdout end
+    --  callback(item)
+    --end)
+    -- vim.system({"wn", word, "-over"}, {}, function(res)
+    --  if res.code == 0 then item.documentation = res.stdout end
+    --  callback(item)
+    --end)
+  end
 }
 ```
 
