@@ -169,8 +169,6 @@ end
 function source:resolve(item, callback)
   if self.opts.resolve then
     self.opts.resolve(item, callback)
-  else
-    callback(item)
   end
 end
 
