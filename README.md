@@ -66,6 +66,7 @@ opts = {
   paths = { "path_to_your_words" }, -- word source file paths.
   build_command = "" -- Define a Command to rebuild words, eg: `BuildDatWord`, then use `BuildDatWord!` to force rebuild cache.
   spellsuggest = false,-- Enable limited spellsuggest. eg: enter `thsi` give you `this`.
+  resolve = nil -- A source:resolve hook function. see https://cmp.saghen.dev/development/source-boilerplate.html
 }
 ```
 
