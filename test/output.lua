@@ -4,6 +4,13 @@ local isatty = io.type(io.stdout) == "file" and term.isatty(io.stdout)
 
 local colors = require("term.colors")
 
+local old_print = print
+local buffer = {}
+local out = function(...)
+  local args = vim.F.pack_len(...)
+  table.insert(buffer, table.concat(args, " ", 1, args.n))
+end
+
 if not os.getenv("GITHUB_ACTIONS") and not isatty then
   colors = setmetatable({}, {
     __index = function()
@@ -13,6 +20,14 @@ if not os.getenv("GITHUB_ACTIONS") and not isatty then
     end,
   })
 end
+
+local testid = (function()
+  local id = 0
+  return function()
+    id = id + 1
+    return id
+  end
+end)()
 
 local M = {}
 
@@ -119,7 +134,7 @@ return function(options)
       return colors.bright(colors.red(s))
     end,
     id = function(s)
-      return colors.magenta(s)
+      return colors.bright(colors.cyan(s))
     end,
     test = tostring,
     file = colors.blue,
@@ -347,21 +362,13 @@ return function(options)
       suiteEndString:format(testCount, tests, fileCount, files, elapsedTime)
     )
     io.write(getSummaryString())
-    if failureCount > 0 or errorCount > 0 then
-      io.write(M.read_nvim_log(nil, true))
-    end
+    -- if failureCount > 0 or errorCount > 0 then
+    --   io.write(M.read_nvim_log(nil, true))
+    -- end
     io.flush()
 
     return nil, true
   end
-
-  local testid = (function()
-    local id = 0
-    return function()
-      id = id + 1
-      return id
-    end
-  end)()
 
   handler.fileStart = function(file)
     fileTestCount = 0
@@ -387,6 +394,9 @@ return function(options)
   end
 
   handler.testStart = function(element, _parent)
+    buffer = {}
+    _G.print = out
+
     local desc = ("%s %s"):format(
       c.id("T" .. testid()),
       handler.getFullName(element)
@@ -397,34 +407,41 @@ return function(options)
     return nil, true
   end
 
-  local function write_status(element, string)
-    io.write(c.time(getElapsedTime(element)) .. " " .. string)
-    io.flush()
+  local function write_status(element, str)
+    io.write(c.time(getElapsedTime(element)) .. " " .. str)
   end
 
   handler.testEnd = function(element, _parent, status, _debug)
-    local string
+    _G.print = old_print
+    local str
 
     fileTestCount = fileTestCount + 1
     testCount = testCount + 1
     if status == "success" then
       successCount = successCount + 1
-      string = successString
+      str = successString
     elseif status == "pending" then
       skippedCount = skippedCount + 1
-      string = skippedString
+      str = skippedString
     elseif status == "failure" then
       failureCount = failureCount + 1
-      string = failureString
+      str = failureString
         .. failureDescription(handler.failures[#handler.failures])
     elseif status == "error" then
       errorCount = errorCount + 1
-      string = errorString
-        .. failureDescription(handler.errors[#handler.errors])
+      str = errorString .. failureDescription(handler.errors[#handler.errors])
     else
-      string = "unexpected test status! (" .. status .. ")"
+      str = "unexpected test status! (" .. status .. ")"
     end
-    write_status(element, string)
+    write_status(element, str)
+
+    if #buffer > 0 then
+      for _, line in ipairs(buffer) do
+        io.write(line .. "\n")
+      end
+    end
+
+    io.flush()
 
     return nil, true
   end
@@ -432,6 +449,7 @@ return function(options)
   handler.error = function(element, _parent, _message, _debug)
     if element.descriptor ~= "it" then
       write_status(element, failureDescription(handler.errors[#handler.errors]))
+      io.flush()
       errorCount = errorCount + 1
     end
 

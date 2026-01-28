@@ -20,7 +20,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup neovim
         uses: rhysd/action-setup-vim@v1
@@ -29,14 +29,14 @@ jobs:
           version: ${{ matrix.neovim_version }}
 
       - name: Install Lua
-        uses: leso-kn/gh-actions-lua@master
+        uses: leafo/gh-actions-lua@v12
         with:
           luaVersion: "5.1"
 
       - name: Install Luarocks
-        uses: hishamhm/gh-actions-luarocks@master
+        uses: leafo/gh-actions-luarocks@v6
         with:
-          luarocksVersion: "3.12.2"
+          luarocksVersion: "3.13.0"
 
       - name: Install busted
         run: |
