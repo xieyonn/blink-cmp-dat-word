@@ -1,0 +1,8 @@
+return {
+  include = {
+    "blink%-cmp%-dat%-word",
+  },
+  exclude = {
+    "blink%-cmp%-dat%-word/init",
+  },
+}

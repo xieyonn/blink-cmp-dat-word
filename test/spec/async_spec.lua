@@ -4,7 +4,7 @@ local t = require("t")
 local eq = t.eq
 local neq = t.neq
 
-describe("async test #async", function()
+describe("async", function()
   local file
   local test_file
   local done = d.new()

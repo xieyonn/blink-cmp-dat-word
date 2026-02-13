@@ -1,0 +1,15 @@
+coverage:
+  status:
+    project:
+      default:
+        target: "60"
+        threshold: "0"
+        strict: "no"
+        patch: "yes"
+  patch:
+    default:
+      target: "60"
+      threshold: "0"
+      strict: "no"
+notify:
+  require_ci_to_pass: yes

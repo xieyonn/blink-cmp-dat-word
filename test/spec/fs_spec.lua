@@ -7,12 +7,13 @@ local neq = t.neq
 
 local FILE_CHUNK_SIZE = 64 * 1024
 
-describe("fs #fs", function()
+describe("fs", function()
   local create_file = function(filename, size)
     local fd = vim.uv.fs_open(filename, "w", tonumber("755", 8))
     assert(fd, string.format("open file %s failed", filename))
+    local item = string.rep("a", 1024)
     for _ = 1, size do
-      local ok = vim.uv.fs_write(fd, string.rep("a", 1024))
+      local ok = vim.uv.fs_write(fd, item)
       assert(ok)
     end
     assert(vim.uv.fs_close(fd), string.format("close file %s failed", filename))
@@ -76,8 +77,9 @@ describe("fs #fs", function()
     local done = d.new()
     local data = ""
 
+    local item = string.rep("a", 1024)
     for _ = 1, 3000 do
-      data = data .. string.rep("a", 1024)
+      data = data .. item
     end
 
     async.run(function()
