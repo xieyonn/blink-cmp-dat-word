@@ -33,8 +33,14 @@ while getopts 'ilEve:' opt; do
     esac
 done
 
-if [ -n "$lua_expr" ]; then
+if [[ -n "$lua_expr" ]]; then
     nvim --headless -c "lua $lua_expr" -c 'quitall!'
-else
-    nvim -l "$@"
+    exit 0
 fi
+
+if [ -n "$LUACOV" ]; then
+    nvim -l <(echo "local r=require('luacov.runner');r.init();local f=table.remove(arg,1);_G.arg=arg;dofile(f);r.save_stats()") "$@"
+    exit 0
+fi
+
+nvim -l "$@"

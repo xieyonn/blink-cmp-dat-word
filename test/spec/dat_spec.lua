@@ -17,7 +17,7 @@ local words = {
   "ccc",
 }
 
-describe("dat #dat", function()
+describe("dat", function()
   local build = function()
     local dat = dattree.new()
 

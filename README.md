@@ -1,8 +1,11 @@
 # blink-cmp-dat-word
 
-[![Unit Tests](https://github.com/xieyonn/blink-cmp-dat-word/actions/workflows/test.yaml/badge.svg?branch=main)](https://github.com/xieyonn/blink-cmp-dat-word/actions/workflows/test.yaml)
-
 Fast, offline word source for [blink.cmp](https://github.com/Saghen/blink.cmp). Pure Lua, no other dependencies.
+
+[![coverage](https://img.shields.io/codecov/c/github/xieyonn/blink-cmp-dat-word?branch=main&logo=codecov)](https://codecov.io/gh/xieyonn/blink-cmp-dat-word)
+[![release](https://img.shields.io/github/v/release/xieyonn/blink-cmp-dat-word)](https://github.com/xieyonn/blink-cmp-dat-word/releases/latest)
+[![Requires Neovim 0.11+](https://img.shields.io/badge/requires-nvim%200.11%2B-9cf?logo=neovim)](https://neovim.io/)
+[![license](https://img.shields.io/github/license/xieyonn/blink-cmp-dat-word)](https://github.com/xieyonn/blink-cmp-dat-word/blob/main/LICENSE)
 
 <img src="data/preview.png" alt="Preview Image" width="580">
 

@@ -1,8 +1,21 @@
-.PHONY: fmt test
-
 .DEFAULT_GOAL = test
 
+LUA_FILES := $(shell find . -name "*.lua" ! -path "./.git/*")
+MD_FILES := README.md
+SH_FILES := test/bin/lua.sh
+YAML_FILES := $(shell find . \( -name "*.yml" -o -name "*.yaml" \) ! -path "./.git/*")
+
+.PHONY: fmt test cov
+
 fmt:
-	stylua .
+	@stylua $(LUA_FILES)
+	@prettier --write $(MD_FILES)
+	@prettier --write $(YAML_FILES)
+	@shfmt -w --indent 4 -bn -ci -sr $(SH_FILES)
 test:
 	@busted
+cov:
+	@rm -f luacov.stats.out luacov.report.out
+	@LUACOV=1 busted
+	@luacov
+	@sed -n '/Summary/,$$p' luacov.report.out
